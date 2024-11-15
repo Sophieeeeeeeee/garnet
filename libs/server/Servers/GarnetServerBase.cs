@@ -60,6 +60,7 @@ namespace Garnet.server
         /// Logger
         /// </summary>
         protected readonly ILogger logger;
+        protected readonly ILogger timelogger;
 
 
         long total_connections_received = 0;
@@ -114,9 +115,10 @@ namespace Garnet.server
         /// <param name="port"></param>
         /// <param name="networkBufferSize"></param>
         /// <param name="logger"></param>
-        public GarnetServerBase(string address, int port, int networkBufferSize, ILogger logger = null)
+        public GarnetServerBase(string address, int port, int networkBufferSize, ILogger logger = null, ILogger timelogger = null)
         {
             this.logger = logger;
+            this.timelogger = timelogger;
             this.address = address;
             this.port = port;
             this.networkBufferSize = networkBufferSize;

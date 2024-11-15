@@ -10,6 +10,7 @@ using Garnet.common;
 using Garnet.networking;
 using Garnet.server.TLS;
 using Microsoft.Extensions.Logging;
+using Garnet;
 
 namespace Garnet.server
 {
@@ -69,8 +70,8 @@ namespace Garnet.server
         /// <param name="tlsOptions"></param>
         /// <param name="networkSendThrottleMax"></param>
         /// <param name="logger"></param>
-        public GarnetServerTcp(string address, int port, int networkBufferSize = default, IGarnetTlsOptions tlsOptions = null, int networkSendThrottleMax = 8, ILogger logger = null)
-            : base(address, port, networkBufferSize, logger)
+        public GarnetServerTcp(string address, int port, int networkBufferSize = default, IGarnetTlsOptions tlsOptions = null, int networkSendThrottleMax = 8, ILogger logger = null, ILogger timelogger = null)
+            : base(address, port, networkBufferSize, logger, timelogger)
         {
             this.tlsOptions = tlsOptions;
             this.networkSendThrottleMax = networkSendThrottleMax;
@@ -133,6 +134,7 @@ namespace Garnet.server
             // Ok to create new event args on accept because we assume a connection to be long-running
             string remoteEndpointName = e.AcceptSocket.RemoteEndPoint?.ToString();
             logger?.LogDebug("Accepted TCP connection from {remoteEndpoint}", remoteEndpointName);
+            timelogger?.LogDebug("Accepted TCP connection from {remoteEndpoint} at tick {nowTick}", remoteEndpointName, GlobalClock.NowTicks);
 
 
             ServerTcpNetworkHandler handler = null;
@@ -142,7 +144,7 @@ namespace Garnet.server
                 {
                     try
                     {
-                        handler = new ServerTcpNetworkHandler(this, e.AcceptSocket, networkBufferSettings, networkPool, tlsOptions != null, networkSendThrottleMax: networkSendThrottleMax, logger: logger);
+                        handler = new ServerTcpNetworkHandler(this, e.AcceptSocket, networkBufferSettings, networkPool, tlsOptions != null, networkSendThrottleMax: networkSendThrottleMax, logger: logger, timelogger:timelogger);
                         if (!activeHandlers.TryAdd(handler, default))
                             throw new Exception("Unable to add handler to dictionary");
 

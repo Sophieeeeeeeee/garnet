@@ -1,0 +1,25 @@
+﻿[000.2024-11-15 04:58:25.3021] (Information) <GarnetServer> Garnet 1.0.39 64 bit; standalone mode; Port: 6379
+[000.2024-11-15 04:58:25.3070] (Information) <ArgParser> Configuration import from embedded resource succeeded. Path: defaults.conf.
+[000.2024-11-15 04:58:25.3071] (Information) <ArgParser> Configuration file path not specified. Using default values with command-line switches.
+[000.2024-11-15 04:58:25.3362] (Information) <Options> [Store] Using page size of 32m
+[000.2024-11-15 04:58:25.3364] (Information) <Options> [Store] Using log memory size of 16g
+[000.2024-11-15 04:58:25.3364] (Information) <Options> [Store] There are 512 log pages in memory
+[000.2024-11-15 04:58:25.3366] (Information) <Options> [Store] Using disk segment size of 1g
+[000.2024-11-15 04:58:25.3367] (Information) <Options> [Store] Using hash index size of 128m (2m cache lines)
+[000.2024-11-15 04:58:25.3368] (Information) <Options> [Store] Hash index size is optimized for up to ~8m distinct keys
+[000.2024-11-15 04:58:25.3368] (Information) <Options> [Store] Using log mutable percentage of 90%
+[000.2024-11-15 04:58:25.3368] (Information) <Options> [Store] Not using Revivification
+[000.2024-11-15 04:58:25.3590] (Trace) <TsavoriteKV [main]> KV Initialize size:2097152, sizeBytes:134217728 sectorSize:512 alignedSizeBytes:134218240
+[000.2024-11-15 04:58:25.3634] (Information) <TsavoriteKV  [obj]> [Object Store] Using page size of 1m
+[000.2024-11-15 04:58:25.3635] (Information) <TsavoriteKV  [obj]> [Object Store] Each page can hold ~43690 key-value pairs of objects
+[000.2024-11-15 04:58:25.3635] (Information) <TsavoriteKV  [obj]> [Object Store] Using log memory size of 32m
+[000.2024-11-15 04:58:25.3636] (Information) <TsavoriteKV  [obj]> [Object Store] This can hold ~1398101 key-value pairs of objects in memory total
+[000.2024-11-15 04:58:25.3636] (Information) <TsavoriteKV  [obj]> [Object Store] There are 32 log pages in memory
+[000.2024-11-15 04:58:25.3638] (Information) <TsavoriteKV  [obj]> [Object Store] Using disk segment size of 32m
+[000.2024-11-15 04:58:25.3639] (Information) <TsavoriteKV  [obj]> [Object Store] Using hash index size of 16m (256k cache lines)
+[000.2024-11-15 04:58:25.3639] (Information) <TsavoriteKV  [obj]> [Object Store] Hash index size is optimized for up to ~1m distinct keys
+[000.2024-11-15 04:58:25.3639] (Information) <TsavoriteKV  [obj]> [Object Store] Using log mutable percentage of 90%
+[000.2024-11-15 04:58:25.3639] (Information) <TsavoriteKV  [obj]> [Object Store] Heap memory size is unlimited
+[000.2024-11-15 04:58:25.3640] (Information) <TsavoriteKV  [obj]> [Object Store] Not using Revivification
+[000.2024-11-15 04:58:25.3970] (Trace) <GarnetServer> TLS is disabled
+[000.2024-11-15 04:58:25.3978] (Information) <GarnetServer> Total configured memory limit: 17364418560

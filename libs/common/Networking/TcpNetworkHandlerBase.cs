@@ -22,6 +22,7 @@ namespace Garnet.common
         where TNetworkSender : INetworkSender
     {
         readonly ILogger logger;
+        readonly ILogger timelogger;
         readonly Socket socket;
         readonly string remoteEndpoint;
         readonly string localEndpoint;
@@ -30,8 +31,8 @@ namespace Garnet.common
         /// <summary>
         /// Constructor
         /// </summary>
-        public TcpNetworkHandlerBase(TServerHook serverHook, TNetworkSender networkSender, Socket socket, NetworkBufferSettings networkBufferSettings, LimitedFixedBufferPool networkPool, bool useTLS, IMessageConsumer messageConsumer = null, ILogger logger = null)
-            : base(serverHook, networkSender, networkBufferSettings, networkPool, useTLS, messageConsumer: messageConsumer, logger: logger)
+        public TcpNetworkHandlerBase(TServerHook serverHook, TNetworkSender networkSender, Socket socket, NetworkBufferSettings networkBufferSettings, LimitedFixedBufferPool networkPool, bool useTLS, IMessageConsumer messageConsumer = null, ILogger logger = null, ILogger timelogger = null)
+            : base(serverHook, networkSender, networkBufferSettings, networkPool, useTLS, messageConsumer: messageConsumer, logger: logger, timelogger: timelogger)
         {
             this.logger = logger;
             this.socket = socket;

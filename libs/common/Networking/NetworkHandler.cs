@@ -86,6 +86,7 @@ namespace Garnet.networking
         public IMessageConsumer Session => session;
 
         readonly ILogger logger;
+        readonly ILogger timelogger;
 
         /* TLS related fields */
         readonly SslStream sslStream;
@@ -101,10 +102,11 @@ namespace Garnet.networking
         /// <summary>
         /// Constructor
         /// </summary>
-        public unsafe NetworkHandler(TServerHook serverHook, TNetworkSender networkSender, NetworkBufferSettings networkBufferSettings, LimitedFixedBufferPool networkPool, bool useTLS, IMessageConsumer messageConsumer = null, ILogger logger = null)
+        public unsafe NetworkHandler(TServerHook serverHook, TNetworkSender networkSender, NetworkBufferSettings networkBufferSettings, LimitedFixedBufferPool networkPool, bool useTLS, IMessageConsumer messageConsumer = null, ILogger logger = null, ILogger timelogger = null)
             : base(networkPool.MinAllocationSize)
         {
             this.logger = logger;
+            this.timelogger = timelogger;
             this.serverHook = serverHook;
             this.networkSender = networkSender;
             this.session = messageConsumer;

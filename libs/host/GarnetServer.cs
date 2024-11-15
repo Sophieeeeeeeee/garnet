@@ -44,8 +44,10 @@ namespace Garnet
         private KVSettings<byte[], IGarnetObject> objKvSettings;
         private INamedDeviceFactory logFactory;
         private MemoryLogger initLogger;
+        private ILogger timestampLogger;
         private ILogger logger;
         private readonly ILoggerFactory loggerFactory;
+        private readonly ILoggerFactory timestampLoggerFactory;
         private readonly bool cleanupDir;
         private bool disposeLoggerFactory;
 
@@ -58,6 +60,7 @@ namespace Garnet
         /// Resp protocol version
         /// </summary>
         readonly string redisProtocolVersion = "7.2.5";
+
 
         /// <summary>
         /// Metrics API
@@ -128,8 +131,15 @@ namespace Garnet
                 builder.SetMinimumLevel(serverSettings.LogLevel);
             });
 
+            this.timestampLoggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddFile("../../../timestamp.txt");
+                builder.SetMinimumLevel(LogLevel.Trace);
+            });
+
+
             // Assign values to GarnetServerOptions
-            this.opts = serverSettings.GetServerOptions(this.loggerFactory.CreateLogger("Options"));
+            this.opts = serverSettings.GetServerOptions(timestampLogger);
             this.opts.AuthSettings = authenticationSettingsOverride ?? this.opts.AuthSettings;
             this.cleanupDir = cleanupDir;
             this.InitializeServer();
@@ -169,10 +179,16 @@ namespace Garnet
 {normal}");
             }
 
+            Console.WriteLine($"GlobalClock initialized with frequency {GlobalClock.Frequency} ticks/second");
+
             var clusterFactory = opts.EnableCluster ? new ClusterFactory() : null;
 
             this.logger = this.loggerFactory?.CreateLogger("GarnetServer");
             logger?.LogInformation("Garnet {version} {bits} bit; {clusterMode} mode; Port: {port}", version, IntPtr.Size == 8 ? "64" : "32", opts.EnableCluster ? "cluster" : "standalone", opts.Port);
+
+            this.timestampLogger = this.timestampLoggerFactory.CreateLogger("GarnetServer");
+            timestampLogger.LogInformation("Garnet {version} {bits} bit; {clusterMode} mode; Port: {port}", version, IntPtr.Size == 8 ? "64" : "32", opts.EnableCluster ? "cluster" : "standalone", opts.Port);
+            timestampLogger.LogInformation("GlobalClock initialized with frequency {GlobalClock.Frequency} ticks/second", GlobalClock.Frequency);
 
             // Flush initialization logs from memory logger
             FlushMemoryLogger(this.initLogger, "ArgParser", this.loggerFactory);
@@ -207,7 +223,7 @@ namespace Garnet
             }
 
             // Create Garnet TCP server if none was provided.
-            this.server ??= new GarnetServerTcp(opts.Address, opts.Port, 0, opts.TlsOptions, opts.NetworkSendThrottleMax, logger);
+            this.server ??= new GarnetServerTcp(opts.Address, opts.Port, 0, opts.TlsOptions, opts.NetworkSendThrottleMax, logger, timestampLogger);
 
             storeWrapper = new StoreWrapper(version, redisProtocolVersion, server, store, objectStore, objectStoreSizeTracker,
                     customCommandManager, appendOnlyFile, opts, clusterFactory: clusterFactory, loggerFactory: loggerFactory);

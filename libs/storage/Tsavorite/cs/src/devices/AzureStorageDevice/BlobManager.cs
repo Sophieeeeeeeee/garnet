@@ -32,7 +32,7 @@ namespace Tsavorite.devices
         /// <summary>
         /// Storage tracer
         /// </summary>
-        public TsavoriteTraceHelper StorageTracer => TraceHelper.IsTracingAtMostDetailedLevel ? TraceHelper : null;
+        public TsavoriteTraceHelper StorageTracer =>  TraceHelper;
 
         /// <summary>
         /// Error handler for storage accesses
