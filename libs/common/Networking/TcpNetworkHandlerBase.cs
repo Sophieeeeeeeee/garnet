@@ -35,6 +35,7 @@ namespace Garnet.common
             : base(serverHook, networkSender, networkBufferSettings, networkPool, useTLS, messageConsumer: messageConsumer, logger: logger, timelogger: timelogger)
         {
             this.logger = logger;
+            this.timelogger = timelogger;
             this.socket = socket;
             this.closeRequested = 0;
 
@@ -105,6 +106,8 @@ namespace Garnet.common
 
         void Start()
         {
+            timelogger?.LogDebug("Start TCPNetworkHandlerBase from {remoteEndpoint} at tick {nowTick}", RemoteEndpointName, GlobalClock.NowTicks);
+
             var receiveEventArgs = new SocketAsyncEventArgs { AcceptSocket = socket };
             receiveEventArgs.SetBuffer(networkReceiveBuffer, 0, networkReceiveBuffer.Length);
             receiveEventArgs.Completed += RecvEventArg_Completed;
@@ -147,7 +150,7 @@ namespace Garnet.common
                         Dispose(e);
                         break;
                     }
-                    OnNetworkReceive(e.BytesTransferred);
+                    OnNetworkReceive(e.BytesTransferred, RemoteEndpointName);
                     e.SetBuffer(networkReceiveBuffer, networkBytesRead, networkReceiveBuffer.Length - networkBytesRead);
                 } while (!e.AcceptSocket.ReceiveAsync(e));
             }

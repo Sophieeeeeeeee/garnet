@@ -190,6 +190,8 @@ namespace Garnet.server
             if (!AddSession(protocol, ref provider, networkSender, out session))
                 throw new Exception($"Unable to add session");
 
+            
+
             return true;
         }
 

@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Garnet.networking;
+using Microsoft.Extensions.Logging;
 
 namespace Garnet.common
 {
@@ -49,6 +50,8 @@ namespace Garnet.common
         readonly string remoteEndpoint;
         readonly string localEndpoint;
 
+        ILogger timelogger;
+
         readonly NetworkBufferSettings networkBufferSettings;
         readonly LimitedFixedBufferPool networkPool;
 
@@ -69,7 +72,8 @@ namespace Garnet.common
             Socket socket,
             NetworkBufferSettings networkBufferSettings,
             LimitedFixedBufferPool networkPool,
-            int throttleMax = 8)
+            int throttleMax = 8,
+            ILogger timelogger = null)
             : base(networkBufferSettings.sendBufferSize)
         {
             this.networkBufferSettings = networkBufferSettings;
@@ -83,6 +87,7 @@ namespace Garnet.common
 
             remoteEndpoint = socket.RemoteEndPoint is IPEndPoint remote ? $"{remote.Address}:{remote.Port}" : "";
             localEndpoint = socket.LocalEndPoint is IPEndPoint local ? $"{local.Address}:{local.Port}" : "";
+            this.timelogger = timelogger;
         }
 
 
@@ -315,6 +320,8 @@ namespace Garnet.common
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeaaBuffer_Completed(object sender, SocketAsyncEventArgs e)
         {
+            timelogger?.LogDebug("SeaaBuffer_Completed from {remoteEndpoint} at tick {nowTick}", remoteEndpoint, GlobalClock.NowTicks);
+
             ReturnBuffer((GarnetSaeaBuffer)e.UserToken);
             if (Interlocked.Decrement(ref throttleCount) >= ThrottleMax)
                 throttle.Release();

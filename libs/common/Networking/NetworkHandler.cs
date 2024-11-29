@@ -273,8 +273,10 @@ namespace Garnet.networking
         /// On network receive
         /// </summary>
         /// <param name="bytesTransferred">Number of bytes transferred</param>
-        public unsafe void OnNetworkReceive(int bytesTransferred)
+        public unsafe void OnNetworkReceive(int bytesTransferred, string remoteEndpointName)
         {
+            timelogger?.LogDebug("OnNetworkReceive from {remoteEndpoint} at tick {nowTick}", remoteEndpointName, GlobalClock.NowTicks);
+
             // Wait for SslStream async processing to complete, if any (e.g., authentication phase)
             while (readerStatus == TlsReaderStatus.Active)
                 expectingData.WaitAsync(cancellationTokenSource.Token).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -482,8 +484,10 @@ namespace Garnet.networking
             }
         }
 
-        unsafe bool TryProcessRequest()
+        unsafe bool 
+        TryProcessRequest()
         {
+            timelogger?.LogDebug("TryProcessRequest from {remoteEndpoint} at tick {nowTick}", RemoteEndpointName, GlobalClock.NowTicks);
             transportReadHead += session.TryConsumeMessages(transportReceiveBufferPtr + transportReadHead, transportBytesRead - transportReadHead);
 
             // We cannot shift or double transport buffer if a read may be waiting on
