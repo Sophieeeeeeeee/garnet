@@ -106,7 +106,9 @@ namespace Garnet.common
 
         void Start()
         {
-            timelogger?.LogDebug("Start TCPNetworkHandlerBase from {remoteEndpoint} at tick {nowTick}", RemoteEndpointName, GlobalClock.NowTicks);
+            DateTime now = DateTime.UtcNow;
+            long microseconds = (long)(now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+            timelogger?.LogDebug("Start TCPNetworkHandlerBase from {remoteEndpoint} at tick {nowTick} at {microseconds}", RemoteEndpointName, GlobalClock.NowTicks, microseconds);
 
             var receiveEventArgs = new SocketAsyncEventArgs { AcceptSocket = socket };
             receiveEventArgs.SetBuffer(networkReceiveBuffer, 0, networkReceiveBuffer.Length);

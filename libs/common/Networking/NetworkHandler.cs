@@ -99,6 +99,8 @@ namespace Garnet.networking
         // Number of times Dispose has been called
         int disposeCount;
 
+        string remoteremoteEndpointName; 
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -275,7 +277,9 @@ namespace Garnet.networking
         /// <param name="bytesTransferred">Number of bytes transferred</param>
         public unsafe void OnNetworkReceive(int bytesTransferred, string remoteEndpointName)
         {
-            timelogger?.LogDebug("OnNetworkReceive from {remoteEndpoint} at tick {nowTick}", remoteEndpointName, GlobalClock.NowTicks);
+            DateTime now = DateTime.UtcNow;
+            long microseconds = (long)(now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+            timelogger?.LogDebug("OnNetworkReceive from {remoteEndpointName} at tick {nowTick} at {microseconds}", remoteEndpointName, GlobalClock.NowTicks, microseconds);
 
             // Wait for SslStream async processing to complete, if any (e.g., authentication phase)
             while (readerStatus == TlsReaderStatus.Active)
@@ -295,7 +299,7 @@ namespace Garnet.networking
                         transportBytesRead = networkBytesRead;
 
                         // We do not have an active read task, so we will process on the network thread
-                        Process();
+                        Process(remoteEndpointName);
                     }
                     else
                     {
@@ -337,12 +341,12 @@ namespace Garnet.networking
         static void ThrowInvalidOperationException(string message)
             => throw new InvalidOperationException(message);
 
-        unsafe void Process()
+        unsafe void Process(string remoteEndpointName=null)
         {
             if (transportBytesRead > 0)
             {
                 if (session != null || serverHook.TryCreateMessageConsumer(new Span<byte>(transportReceiveBufferPtr, transportBytesRead), GetNetworkSender(), out session))
-                    TryProcessRequest();
+                    TryProcessRequest(remoteEndpointName);
             }
         }
 
@@ -485,9 +489,12 @@ namespace Garnet.networking
         }
 
         unsafe bool 
-        TryProcessRequest()
+        TryProcessRequest(string remoteEndpointName=null)
         {
-            timelogger?.LogDebug("TryProcessRequest from {remoteEndpoint} at tick {nowTick}", RemoteEndpointName, GlobalClock.NowTicks);
+            DateTime now = DateTime.UtcNow;
+            long microseconds = (long)(now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+            timelogger?.LogDebug("TryProcessRequest from {remoteEndpoint} at tick {nowTick} at {microseconds}", remoteEndpointName, GlobalClock.NowTicks, microseconds);
+
             transportReadHead += session.TryConsumeMessages(transportReceiveBufferPtr + transportReadHead, transportBytesRead - transportReadHead);
 
             // We cannot shift or double transport buffer if a read may be waiting on

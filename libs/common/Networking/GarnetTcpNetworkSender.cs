@@ -198,6 +198,10 @@ namespace Garnet.common
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool SendResponse(int offset, int size)
         {
+            DateTime now = DateTime.UtcNow;
+            long microseconds = (long)(now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+            timelogger?.LogDebug("SendResponse from {remoteEndpoint} at tick {nowTick} at {microseconds}", remoteEndpoint, GlobalClock.NowTicks, microseconds);
+
             var _r = responseObject;
             if (_r == null) return false;
             responseObject = null;
@@ -320,7 +324,9 @@ namespace Garnet.common
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeaaBuffer_Completed(object sender, SocketAsyncEventArgs e)
         {
-            timelogger?.LogDebug("SeaaBuffer_Completed from {remoteEndpoint} at tick {nowTick}", remoteEndpoint, GlobalClock.NowTicks);
+            DateTime now = DateTime.UtcNow;
+            long microseconds = (long)(now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+            timelogger?.LogDebug("SeaaBuffer_Completed from {remoteEndpoint} at tick {nowTick} at {microseconds}", remoteEndpoint, GlobalClock.NowTicks, microseconds);
 
             ReturnBuffer((GarnetSaeaBuffer)e.UserToken);
             if (Interlocked.Decrement(ref throttleCount) >= ThrottleMax)
