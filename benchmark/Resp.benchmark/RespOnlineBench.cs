@@ -496,15 +496,36 @@ namespace Resp.benchmark
                     case OpType.GET:
                         var getCurr = getBuffer + 13;
                         RespWriteUtils.WriteAsciiBulkString(req.GenerateKey(), ref getCurr, getEnd);
+
+                        DateTime get_now = DateTime.UtcNow;
+                        long get_microseconds = (long)(get_now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+                        Console.WriteLine($"Sending GET at {get_microseconds}");
+
                         client.Send(getBuffer, (int)(getCurr - getBuffer), 1);
                         client.CompletePendingRequests();
+
+                        DateTime get_after = DateTime.UtcNow;
+                        long get_after_microseconds = (long)(get_after - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+                        Console.WriteLine($"Received GET at {get_after_microseconds}");
+
+
                         break;
                     case OpType.SET:
                         var setCurr = setBuffer + 13;
                         RespWriteUtils.WriteAsciiBulkString(req.GenerateKey(), ref setCurr, setEnd);
                         RespWriteUtils.WriteBulkString(req.GenerateValueBytes().Span, ref setCurr, setEnd);
+
+                        DateTime set_now = DateTime.UtcNow;
+                        long set_microseconds = (long)(set_now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+                        Console.WriteLine($"Sending SET at {set_microseconds}");
+
                         client.Send(setBuffer, (int)(setCurr - setBuffer), 1);
                         client.CompletePendingRequests();
+
+                        DateTime set_after = DateTime.UtcNow;
+                        long set_after_microseconds = (long)(set_after - DateTime.UnixEpoch).TotalMilliseconds * 1000;
+                        Console.WriteLine($"Received SET at {set_after_microseconds}");
+
                         break;
                     case OpType.SETEX:
                         var setexCurr = setexBuffer + 15;
