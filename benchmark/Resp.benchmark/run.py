@@ -121,7 +121,7 @@ def main():
     valuelength = 8
     dbsize = 16777216 
     dbsize_mb = 16128
-    host = "128.105.145.65"
+    host = "128.105.145.123"
     port = 6379
     file_name = "client_stats.txt"
 
@@ -130,6 +130,7 @@ def main():
                         f"--host {host} --port {port} " \
                         f"--dbsize {dbsize} --keylength {keylength} --valuelength {valuelength} " \
                         f"--itp {1} " \
+                        f"--batchsize {1} " \
                         f"--threads {1} " \
                         f"--file-logger {file_name}"
     

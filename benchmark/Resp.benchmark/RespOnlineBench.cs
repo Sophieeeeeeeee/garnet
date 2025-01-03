@@ -499,14 +499,14 @@ namespace Resp.benchmark
 
                         DateTime get_now = DateTime.UtcNow;
                         long get_microseconds = (long)(get_now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
-                        Console.WriteLine($"Sending GET at {get_microseconds}");
+                        Console.WriteLine($"Sending GET at {GlobalClock.NowTicks} tick at {get_microseconds} microsec");
 
                         client.Send(getBuffer, (int)(getCurr - getBuffer), 1);
                         client.CompletePendingRequests();
 
                         DateTime get_after = DateTime.UtcNow;
                         long get_after_microseconds = (long)(get_after - DateTime.UnixEpoch).TotalMilliseconds * 1000;
-                        Console.WriteLine($"Received GET at {get_after_microseconds}");
+                        Console.WriteLine($"Received GET at {GlobalClock.NowTicks} tick at {get_after_microseconds} microsec");
 
 
                         break;
@@ -517,14 +517,14 @@ namespace Resp.benchmark
 
                         DateTime set_now = DateTime.UtcNow;
                         long set_microseconds = (long)(set_now - DateTime.UnixEpoch).TotalMilliseconds * 1000;
-                        Console.WriteLine($"Sending SET at {set_microseconds}");
+                        Console.WriteLine($"Sending SET at {GlobalClock.NowTicks} tick at {set_microseconds} microsec");
 
                         client.Send(setBuffer, (int)(setCurr - setBuffer), 1);
                         client.CompletePendingRequests();
 
                         DateTime set_after = DateTime.UtcNow;
                         long set_after_microseconds = (long)(set_after - DateTime.UnixEpoch).TotalMilliseconds * 1000;
-                        Console.WriteLine($"Received SET at {set_after_microseconds}");
+                        Console.WriteLine($"Received SET at {GlobalClock.NowTicks} tick at {set_after_microseconds} microsec");
 
                         break;
                     case OpType.SETEX:
